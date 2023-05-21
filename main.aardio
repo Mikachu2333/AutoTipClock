@@ -8,8 +8,8 @@ mainForm.add(
 dot1={cls="static";text=":";left=64;top=0;right=83;bottom=47;align="center";center=1;clip=1;color=65535;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=3};
 dot2={cls="static";text=":";left=149;top=0;right=168;bottom=47;align="center";center=1;color=65535;db=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=4};
 hotkey={cls="hotkey";left=199;top=27;right=232;bottom=47;edge=1;hide=1;z=6};
-hour={cls="static";left=0;top=0;right=63;bottom=47;align="center";center=1;clip=1;color=15793151;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=1};
-min={cls="static";left=84;top=0;right=147;bottom=47;align="center";center=1;color=16777215;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=2};
+hour={cls="static";left=0;top=0;right=63;bottom=47;align="center";center=1;clip=1;color=16777215;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=1};
+min={cls="static";left=85;top=0;right=148;bottom=47;align="center";center=1;color=16777215;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=2};
 sec={cls="static";left=169;top=0;right=232;bottom=47;align="center";center=1;color=16777215;db=1;dr=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=5}
 )
 /*}}*/
@@ -48,7 +48,6 @@ thread.invoke(
 			}
 		}
 		thread.set("EFF958B55FC946A48E089063D2EC7426",false)
-		io.print(thread.var("sleep_time").get())
 		if (hotkey_list[2] != 0){
 			mainForm.hotkey.value = hotkey_list
 			if((mainForm.hotkey.value[2] != 0) and (mainForm.hotkey.value[2] != null)){
@@ -80,7 +79,10 @@ thread.invoke(
 				if(tonumber(time_now.hour)%3 == 0 and tonumber(time_now.minute) == 0 and tonumber(time_now.second) == 0){
 					time_now = time()
 				}
+			}elseif(tonumber(time_now.hour) == 0){
+				time_now = time()
 			}
+			
 			if(tonumber(time_now.hour) < 10){
 				mainForm.hour.text = "0" + tostring(time_now.hour)
 			}else{
@@ -96,18 +98,15 @@ thread.invoke(
 			}
 			time_str = thread.table("v_share_list").tostring()
 			var find_1,find_2 = string.indexOf(time_str,tostring(time_now,"%H%M%S"))
-			//io.print(find_1 != null)
-			//io.print(thread.var("sleep_time_use") == 0)
-			//io.print()
 			//io.print((find_1 != null) and (thread.var("sleep_time_use").get() == 0))
 			//io.print((flag == true) and (thread.var("sleep_time_use").get() < thread.var("sleep_time").get()))
 			//io.print((flag == true) and (thread.var("sleep_time_use").get() == thread.var("sleep_time").get()))
 			//io.print()
 			if((find_1 != null) and (thread.var("sleep_time_use").get() == 0)){
 				flag = true
-				mainForm.hour.color = 255
-				mainForm.min.color = 255
-				mainForm.sec.color = 255
+				mainForm.hour.color = 65535
+				mainForm.min.color = 65535
+				mainForm.sec.color = 65535
 				mainForm.redraw()
 				app_window = win.animate.slide(mainForm)
 				app_window.show(1000,0x1/*水平自左向右*/)
@@ -118,9 +117,9 @@ thread.invoke(
 				thread.var("sleep_time_use").set(0)
 				flag = false
 				app_window.hide(500,0x2/*水平自右向左*/)
-				mainForm.hour.color = "fffbf0"
-				mainForm.min.color = "fffbf0"
-				mainForm.sec.color = "fffbf0"
+				mainForm.hour.color = 16777215
+				mainForm.min.color = 16777215
+				mainForm.sec.color = 16777215
 			}
 		}
 	},mainForm,time_list
@@ -130,7 +129,6 @@ mainForm.onTrayMessage = {
 	[0x205/*_WM_RBUTTONUP*/  ] = function(wParam){
 		mainForm.close()};
 	[0x202/*_WM_LBUTTONUP*/] = function(wParam){
-		//thread.set("EFF958B55FC946A48E089063D2EC7426",false)
 		mainForm.reghotkey(
 			function(id,mod,vk){
 				app_window.show(1000,0x1/*水平自左向右*/)
