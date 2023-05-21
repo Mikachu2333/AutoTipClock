@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project ver="10" name="时钟" libEmbed="true" icon="未命名-1.ico" ui="win" output="AutoTipClock.exe" CompanyName="None" FileDescription="Clock" LegalCopyright="Copyright (C) MIKA 2023" ProductName="Clock" InternalName="Clock" FileVersion="1.1.10.38" ProductVersion="1.1.10.38" publishDir="/dist/" dstrip="true" local="false" ignored="false">
+<project ver="10" name="时钟" libEmbed="true" icon="未命名-1.ico" ui="win" output="AutoTipClock.exe" CompanyName="None" FileDescription="Clock" LegalCopyright="Copyright (C) MIKA 2023" ProductName="Clock" InternalName="Clock" FileVersion="1.2.10.78" ProductVersion="1.2.10.78" publishDir="/dist/" dstrip="true" local="false" ignored="false">
 	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
 	<folder name="资源文件" path="res" embed="true" local="false" ignored="false"/>
 	<folder name="窗体文件" path="dlg" comment="目录" embed="true" local="false" ignored="false"/>

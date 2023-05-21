@@ -3,14 +3,14 @@ import thread.table
 import win.util.tray
 import win.animate
 /*DSG{{*/
-mainForm = win.form(cls="TIME_TIP_FORM";text="时钟";left=0;top=100;right=232;bottom=147;border="none";exmode="toolwindow";max=false;min=false;sysmenu=false;topmost=1)
+mainForm = win.form(cls="TIME_TIP_FORM";text="时钟";left=0;top=100;right=232;bottom=147;image=$"\bg.png";bgcolor=4934475;border="none";exmode="toolwindow";max=false;min=false;sysmenu=false;topmost=1)
 mainForm.add(
-dot1={cls="static";text=":";left=64;top=0;right=83;bottom=47;align="center";center=1;color=255;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=3};
-dot2={cls="static";text=":";left=149;top=0;right=168;bottom=47;align="center";center=1;color=255;db=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=4};
+dot1={cls="static";text=":";left=64;top=0;right=83;bottom=47;align="center";center=1;clip=1;color=65535;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=3};
+dot2={cls="static";text=":";left=149;top=0;right=168;bottom=47;align="center";center=1;color=65535;db=1;dl=1;dr=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=4};
 hotkey={cls="hotkey";left=199;top=27;right=232;bottom=47;edge=1;hide=1;z=6};
-hour={cls="static";left=0;top=0;right=63;bottom=47;align="center";center=1;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=1};
-min={cls="static";left=84;top=0;right=147;bottom=47;align="center";center=1;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=2};
-sec={cls="static";left=169;top=0;right=232;bottom=47;align="center";center=1;db=1;dr=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=5}
+hour={cls="static";left=0;top=0;right=63;bottom=47;align="center";center=1;clip=1;color=15793151;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=1};
+min={cls="static";left=84;top=0;right=147;bottom=47;align="center";center=1;color=16777215;db=1;dl=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=2};
+sec={cls="static";left=169;top=0;right=232;bottom=47;align="center";center=1;color=16777215;db=1;dr=1;dt=1;font=LOGFONT(h=-48;name='微软雅黑');transparent=1;z=5}
 )
 /*}}*/
 
@@ -20,10 +20,13 @@ if(!io.exist(io._exedir + "time_config.ini")){
 	mainForm.close()
 }
 
+//io.open()
 mainForm.tray = win.util.tray(mainForm)
 var app_window = win.animate.slide(mainForm)
 var time_list = thread.table("v_share_list",true)
-
+thread.var("sleep_time",3)
+thread.var("sleep_time_use",0)
+thread.set("EFF958B55FC946A48E089063D2EC7426",true)
 thread.invoke( 
 	function(mainForm){
 		import win.ui
@@ -33,31 +36,51 @@ thread.invoke(
 		var hotkey_list = {0,0}
 		for i in io.lines(io.open(io._exedir + "time_config.ini","r")){
 			if(string.left(i,1,true) == "&"){
-				time_list.set(tostring(temp),tostring(string.right(i,-2,true)))
+				time_list.set(tostring(temp),string.right(i,-2,true))
 				temp = temp + 1
 			}elseif(string.left(i,1,true) == "@"){
-				hotkey_list[1] = tonumber(string.right(i,-2,true))
+				hotkey_list[1] = string.right(i,-2,true)
 			}elseif(string.left(i,1,true) == "%"){
-				hotkey_list[2] = tonumber(string.right(i,-2,true)) + 64
+				hotkey_list[2] = string.right(i,-2,true) + 64
+			}elseif(string.left(i,1,true) == "+"){
+				thread.var("sleep_time").set(string.right(i,-2,true)*1)
+				thread.var("sleep_time_use").set(string.right(i,-2,true)*1)
 			}
 		}
+		thread.set("EFF958B55FC946A48E089063D2EC7426",false)
+		io.print(thread.var("sleep_time").get())
 		if (hotkey_list[2] != 0){
 			mainForm.hotkey.value = hotkey_list
 			if((mainForm.hotkey.value[2] != 0) and (mainForm.hotkey.value[2] != null)){
 				mainForm.hotkey.value = hotkey_list
 			}
 		}
-	},mainForm,hotkey_ctrl
+	},mainForm
 )
 
-
 thread.invoke(
-	function(mainForm,time_str,show_hide){
+	function(mainForm,time_str){
 		import win
 		import thread.table
 		import win.animate
-		while(sleep(333)){
-			time_now = time()
+		time_now = time()
+		app_window = win.animate.slide(mainForm)
+		while(thread.get("EFF958B55FC946A48E089063D2EC7426") and (sleep(100))){
+			if(thread.var("sleep_time").get() == thread.var("sleep_time_use").get()){
+				thread.var("sleep_time_use").set(0)
+			}
+			thread.set("EFF958B55FC946A48E089063D2EC7426",null)
+		}
+		var flag = false
+		while(sleep(1000)){
+			time_now = time_now.addsecond(1)
+			//io.print(time_now)
+			//io.print(thread.var("sleep_time_use").get(),type(thread.var("sleep_time_use").get()))
+			if(tonumber(time_now.hour) != 0){
+				if(tonumber(time_now.hour)%3 == 0 and tonumber(time_now.minute) == 0 and tonumber(time_now.second) == 0){
+					time_now = time()
+				}
+			}
 			if(tonumber(time_now.hour) < 10){
 				mainForm.hour.text = "0" + tostring(time_now.hour)
 			}else{
@@ -72,38 +95,52 @@ thread.invoke(
 				mainForm.sec.text = tostring(time_now.second)
 			}
 			time_str = thread.table("v_share_list").tostring()
-			var find_1,find_2 = string.indexOf(time_str,tostring(time_now,"%H%M%S")) 
-			if(find_1 != null){
+			var find_1,find_2 = string.indexOf(time_str,tostring(time_now,"%H%M%S"))
+			//io.print(find_1 != null)
+			//io.print(thread.var("sleep_time_use") == 0)
+			//io.print()
+			//io.print((find_1 != null) and (thread.var("sleep_time_use").get() == 0))
+			//io.print((flag == true) and (thread.var("sleep_time_use").get() < thread.var("sleep_time").get()))
+			//io.print((flag == true) and (thread.var("sleep_time_use").get() == thread.var("sleep_time").get()))
+			//io.print()
+			if((find_1 != null) and (thread.var("sleep_time_use").get() == 0)){
+				flag = true
 				mainForm.hour.color = 255
 				mainForm.min.color = 255
 				mainForm.sec.color = 255
 				mainForm.redraw()
 				app_window = win.animate.slide(mainForm)
 				app_window.show(1000,0x1/*水平自左向右*/)
-				win.delay(4000)
+				thread.var("sleep_time_use").set(thread.var("sleep_time_use").get() + 1)
+			}elseif((flag == true) and (thread.var("sleep_time_use").get() < thread.var("sleep_time").get())){
+				thread.var("sleep_time_use").set(thread.var("sleep_time_use").get() + 1)
+			}elseif((flag == true) and (thread.var("sleep_time_use").get() == thread.var("sleep_time").get())){
+				thread.var("sleep_time_use").set(0)
+				flag = false
 				app_window.hide(500,0x2/*水平自右向左*/)
-				mainForm.hour.color = 0
-				mainForm.min.color = 0
-				mainForm.sec.color = 0
+				mainForm.hour.color = "fffbf0"
+				mainForm.min.color = "fffbf0"
+				mainForm.sec.color = "fffbf0"
 			}
 		}
-	},mainForm,time_list,show_hide
+	},mainForm,time_list
 )
 
 mainForm.onTrayMessage = {
 	[0x205/*_WM_RBUTTONUP*/  ] = function(wParam){
 		mainForm.close()};
 	[0x202/*_WM_LBUTTONUP*/] = function(wParam){
+		//thread.set("EFF958B55FC946A48E089063D2EC7426",false)
 		mainForm.reghotkey(
 			function(id,mod,vk){
 				app_window.show(1000,0x1/*水平自左向右*/)
-				win.delay(4000)
+				win.delay(thread.var("sleep_time").get() * 1000)
 				app_window.hide(500,0x2/*水平自右向左*/)
 			},
 			mainForm.hotkey.gethotkey()
 		)
 		app_window.show(1000,0x1/*水平自左向右*/)
-		win.delay(4000)
+		win.delay(thread.var("sleep_time").get() * 1000)
 		app_window.hide(500,0x2/*水平自右向左*/)
 	};
 	[0x203/*_WM_LBUTTONDBLCLK*/] = function(wParam){};
