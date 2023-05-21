@@ -15,13 +15,13 @@ sec={cls="static";left=169;top=0;right=232;bottom=47;align="center";center=1;db=
 /*}}*/
 
 if(!io.exist(io._exedir + "time_config.ini")){
-	string.save(io._exedir + "time_config.ini",$"\res\time_config.ini")}
+	string.save(io._exedir + "time_config.ini",$"\res\time_config.ini")
+	mainForm.close()
+}
 
 mainForm.tray = win.util.tray(mainForm)
 var app_window = win.animate.slide(mainForm)
 var time_list = thread.table("v_share_list",true)
-
-io.open()
 
 thread.invoke( 
 	function(mainForm){
@@ -31,7 +31,6 @@ thread.invoke(
 		var temp = 1
 		var hotkey_list = {0,0}
 		for i in io.lines(io.open(io._exedir + "time_config.ini","r")){
-			//io.print(i)
 			if(string.left(i,1,true) == "&"){
 				time_list.set(tostring(temp),tostring(string.right(i,-2,true)))
 				temp = temp + 1
@@ -119,10 +118,6 @@ mainForm.wndproc = function(hwnd,message,wParam,lParam){
 			mainForm.close()
 		}
 	}
-}
-
-mainForm.button.oncommand = function(id,event){
-	win.msgbox("sdf")
 }
 
 return win.loopMessage()
