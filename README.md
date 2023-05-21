@@ -1,8 +1,9 @@
 # AutoTipClock
-一个能够自动贴边隐藏并在你设置的时间弹出进行提醒的程序，aardio编写。A program that automatically hides the edges and pops up at the time you set for reminders, by aardio.
+一个能够自动贴边隐藏并在你设置的时间弹出进行提醒的程序，aardio编写。本程序支持设置1k个（电脑性能足够好，在默认显示时间配置下）的时间提醒，支持自定义系统快捷键，支持自定义程序显示时间。
+A program that automatically hides the edges and pops up at the time you set for reminders, by aardio. This program supports setting 1k (computer performance is good enough, under the default display time configuration) time reminders, support custom system shortcuts, support custom program display time.
 
 ## 注意
-#### 1.本软件在Github开源，是一个简易的免费软件，并遵循MIT协议。
+#### 1.本软件是一个简易的免费软件，并遵循MIT协议。
 
 #### 2.为降低系统负载，设置的刷新时间为每1s刷新一次。为尽力保证时间和系统时间相似，软件将在每次符合（hour % 3 == 0）时同步一次。
 
