@@ -19,35 +19,41 @@ if(!io.exist(io._exedir + "time_config.ini")){
 
 mainForm.tray = win.util.tray(mainForm)
 var app_window = win.animate.slide(mainForm)
-
 var time_list = thread.table("v_share_list",true)
-thread.var("hkid",null)
+
+io.open()
+
 thread.invoke( 
-	function(mainForm,hkid){
+	function(mainForm){
 		import win.ui
 		import thread.table
 		time_list = thread.table("v_share_list")
 		var temp = 1
-		var hotkey_list = {}
-		for i in io.lines(io.open("~/time_config.ini","r")){
-			if((i != "") and (string.cmp(i,"#",1) != 0)){
-				time_list.set(tostring(temp),tostring(i))
+		var hotkey_list = {0,0}
+		for i in io.lines(io.open(io._exedir + "time_config.ini","r")){
+			//io.print(i)
+			if(string.left(i,1,true) == "&"){
+				time_list.set(tostring(temp),tostring(string.right(i,-2,true)))
 				temp = temp + 1
-			}elseif(string.cmp(i,"@",1) == 0){
+			}elseif(string.left(i,1,true) == "@"){
 				hotkey_list[1] = tonumber(string.right(i,-2,true))
-			}elseif(string.cmp(i,"%",1) == 0){
+			}elseif(string.left(i,1,true) == "%"){
 				hotkey_list[2] = tonumber(string.right(i,-2,true)) + 64
 			}
-			
 		}
-		mainForm.hotkey.value = hotkey_list
-	},mainForm,hkid
+		if (hotkey_list[2] != 0){
+			mainForm.hotkey.value = hotkey_list
+			if((mainForm.hotkey.value[2] != 0) and (mainForm.hotkey.value[2] != null)){
+				mainForm.hotkey.value = hotkey_list
+			}
+		}
+	},mainForm,hotkey_ctrl
 )
 
-thread.invoke( 
-	function(mainForm,v_share_list,app_window){
+
+thread.invoke(
+	function(mainForm,time_str,show_hide){
 		import thread.table
-		import win.ui
 		import win.animate
 		while(sleep(333)){
 			time_now = time()
@@ -80,19 +86,26 @@ thread.invoke(
 				mainForm.sec.color = 0
 			}
 		}
-	},mainForm,v_share_list,app_window
+	},mainForm,time_list,show_hide
 )
 
 mainForm.onTrayMessage = {
 	[0x205/*_WM_RBUTTONUP*/  ] = function(wParam){
 		mainForm.close()};
 	[0x202/*_WM_LBUTTONUP*/] = function(wParam){
+		mainForm.reghotkey(
+			function(id,mod,vk){
+				app_window.show(1000,0x1/*水平自左向右*/)
+				win.delay(5000)
+				app_window.hide(500,0x2/*水平自右向左*/)
+			},
+			mainForm.hotkey.gethotkey()
+		)
 		app_window.show(1000,0x1/*水平自左向右*/)
 		win.delay(5000)
-		app_window.hide(500,0x2/*水平自右向左*/)};
-	[0x203/*_WM_LBUTTONDBLCLK*/] = function(wParam){
-		
+		app_window.hide(500,0x2/*水平自右向左*/)
 	};
+	[0x203/*_WM_LBUTTONDBLCLK*/] = function(wParam){};
 	[0x404/*_PARAM_DESTROY*/] = function(wParam){};
 	[0x405/*_PARAM_CLICKED*/] = function(wParam){};}
 
@@ -106,6 +119,10 @@ mainForm.wndproc = function(hwnd,message,wParam,lParam){
 			mainForm.close()
 		}
 	}
+}
+
+mainForm.button.oncommand = function(id,event){
+	win.msgbox("sdf")
 }
 
 return win.loopMessage()
