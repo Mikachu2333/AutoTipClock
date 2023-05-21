@@ -16,6 +16,7 @@ sec={cls="static";left=169;top=0;right=232;bottom=47;align="center";center=1;db=
 
 if(!io.exist(io._exedir + "time_config.ini")){
 	string.save(io._exedir + "time_config.ini",$"\res\time_config.ini")
+	raw.execute("notepad.exe",io._exedir + "time_config.ini")
 	mainForm.close()
 }
 
@@ -52,6 +53,7 @@ thread.invoke(
 
 thread.invoke(
 	function(mainForm,time_str,show_hide){
+		import win
 		import thread.table
 		import win.animate
 		while(sleep(333)){
@@ -78,7 +80,7 @@ thread.invoke(
 				mainForm.redraw()
 				app_window = win.animate.slide(mainForm)
 				app_window.show(1000,0x1/*水平自左向右*/)
-				win.delay(5000)
+				win.delay(4000)
 				app_window.hide(500,0x2/*水平自右向左*/)
 				mainForm.hour.color = 0
 				mainForm.min.color = 0
@@ -95,13 +97,13 @@ mainForm.onTrayMessage = {
 		mainForm.reghotkey(
 			function(id,mod,vk){
 				app_window.show(1000,0x1/*水平自左向右*/)
-				win.delay(5000)
+				win.delay(4000)
 				app_window.hide(500,0x2/*水平自右向左*/)
 			},
 			mainForm.hotkey.gethotkey()
 		)
 		app_window.show(1000,0x1/*水平自左向右*/)
-		win.delay(5000)
+		win.delay(4000)
 		app_window.hide(500,0x2/*水平自右向左*/)
 	};
 	[0x203/*_WM_LBUTTONDBLCLK*/] = function(wParam){};
