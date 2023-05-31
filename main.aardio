@@ -56,7 +56,7 @@ thread.invoke(
 		}
 	},mainForm
 )
-
+//io.open()
 thread.invoke(
 	function(mainForm,time_str){
 		import win
@@ -71,17 +71,15 @@ thread.invoke(
 			thread.set("EFF958B55FC946A48E089063D2EC7426",null)
 		}
 		var flag = false
-		while(sleep(1000)){
-			time_now = time_now.addsecond(1)
+		while(sleep(400)){
+			time_now = time()
 			//io.print(time_now)
 			//io.print(thread.var("sleep_time_use").get(),type(thread.var("sleep_time_use").get()))
-			if(tonumber(time_now.hour) != 0){
-				if(tonumber(time_now.hour)%3 == 0 and tonumber(time_now.minute) == 0 and tonumber(time_now.second) == 0){
-					time_now = time()
-				}
-			}elseif(tonumber(time_now.hour) == 0){
-				time_now = time()
-			}
+			//if(tonumber(time_now.minute)%10 == 0 and tonumber(time_now.second) == 0){
+			//	time_now = time()
+			//}elseif(tonumber(time_now.minute) == 0 and tonumber(time_now.second) == 0){
+			//	time_now = time()
+			//}
 			
 			if(tonumber(time_now.hour) < 10){
 				mainForm.hour.text = "0" + tostring(time_now.hour)
@@ -154,6 +152,10 @@ mainForm.wndproc = function(hwnd,message,wParam,lParam){
 		case 0x206/*_WM_RBUTTONDBLCLK*/{
 			mainForm.close()
 		}
+		case 0x203/*_WM_LBUTTONDBLCLK*/{
+			import win.property
+			win.msgbox(win.property.get(mainForm.hwnd,"Opacity"))
+			}
 	}
 }
 
